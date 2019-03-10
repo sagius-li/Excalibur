@@ -1,0 +1,446 @@
+###############################
+# Installation                #
+###############################
+#
+# Copy this file as ".editorconfig"
+# to the root folder for your source code.
+# The configuration will then apply to all
+# subfolders below the root folder.
+#
+###############################
+
+###############################
+# Core EditorConfig Options   #
+###############################
+
+root = true
+
+# All files
+[*]
+indent_style = space
+
+# Code files
+[*]
+
+indent_style             = space
+indent_size              = 2
+end_of_line              = lf
+charset                  = utf-8
+trim_trailing_whitespace = true
+insert_final_newline     = false
+
+[*.cs]
+indent_size                                                        = 4
+end_of_line                                                        = crlf
+
+
+###############################
+# .NET Coding Conventions     #
+###############################
+
+[*.{cs,vb}]
+# Organize usings
+dotnet_sort_system_directives_first = true
+        #// dotnet_sort_system_directives_first = true
+        #   using System.Collections.Generic;
+        #   using System.Threading.Tasks;
+        #   using Octokit;
+        #
+        #// dotnet_sort_system_directives_first = false
+        #   using System.Collections.Generic;
+        #   using Octokit;
+        #   using System.Threading.Tasks;
+
+
+# Modifier preferences: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#normalize_modifiers
+dotnet_style_require_accessibility_modifiers                       = always : warning
+      #  Value 	                          Description
+      #   always 	                          Prefer accessibility modifiers to be specified
+      #   for_non_interface_members 	      Prefer accessibility modifiers to be declared except for public interface members. This is the same as always and has been added for future proofing if C# adds default interface methods.
+      #   never 	                          Do not prefer accessibility modifiers to be specified
+
+csharp_preferred_modifier_order                                    = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async : warning
+      #   When this rule is set to a list of modifiers, prefer the specified ordering.
+
+dotnet_style_readonly_field                                        = true
+      #  When this rule is set to true, prefer that fields should be marked with readonly (C#) or ReadOnly (Visual Basic) if they are only ever assigned inline, or inside of a constructor.
+      #  When this rule is set to false, specify no preference over whether fields should be marked with readonly (C#) or ReadOnly (Visual Basic).
+
+
+
+# Implicit and explicit types: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#var
+csharp_style_var_for_built_in_types                                = false : warning
+          #// csharp_style_var_for_built_in_types = true
+          #   var x = 5;
+          #
+          #// csharp_style_var_for_built_in_types = false
+          #   int x = 5;
+
+csharp_style_var_when_type_is_apparent                             = false : warning
+        #// csharp_style_var_when_type_is_apparent = true
+        #   var obj = new Customer();
+        #
+        #// csharp_style_var_when_type_is_apparent = false
+        #   Customer obj = new Customer();
+
+csharp_style_var_elsewhere                                         = false : warning
+          #// csharp_style_var_elsewhere = true
+          #            var f = this.Init();
+          #
+          #// csharp_style_var_elsewhere = false
+          #            bool f = this.Init();
+
+		  
+		  
+		  
+		  
+
+#---------------------------------------------------------#
+# Code block preferences: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#code_block
+csharp_prefer_braces                                               = true : none
+          #// csharp_prefer_braces = true
+          #            if (true)
+          #            {
+          #                X = 1;
+          #            }
+          #
+          #// csharp_prefer_braces = false
+          #            if (true)
+          #                X=1;
+
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpCodeStylePageImplSchema.html#resharper_csharp_braces_for_ifelse	  
+# Allow if-else on same line without braces
+resharper_braces_for_ifelse		                                   = required_for_multiline_statement: warning  
+
+
+#---------------------------------------------------------#
+# C# formatting settings: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#c-formatting-settings
+csharp_new_line_before_open_brace                                  = all
+          #// csharp_new_line_before_open_brace = all
+          #   void MyMethod()
+          #   {
+          #       if (...)
+          #        {
+          #           ...
+          #        }
+          #   }
+          #
+          #// csharp_new_line_before_open_brace = none
+          #   void MyMethod() {
+          #       if (...) {
+          #           ...
+          #        }
+          #   }
+
+csharp_new_line_before_else                                        = true
+        #// csharp_new_line_before_else = true
+        #   if (...) {
+        #       ...
+        #   }
+        #   else {
+        #     ...
+        #   }
+        #
+        #// csharp_new_line_before_else = false
+        #   if (...) {
+        #       ...
+        #   } else {
+        #       ...
+        #   }
+
+csharp_new_line_before_catch                                       = true
+        #// csharp_new_line_before_finally = true
+        #   try {
+        #        ...
+        #   }
+        #   catch (Exception e) {
+        #        ...
+        #   }
+        #
+        #// csharp_new_line_before_finally = false
+        #   try {
+        #       ...
+        #   } catch (Exception e) {
+        #       ...
+        #   }
+
+csharp_new_line_before_finally                                     = true
+        #// csharp_new_line_before_finally = true
+        #   try {
+        #        ...
+        #   }
+        #   catch (Exception e) {
+        #        ...
+        #   }
+        #   finally {
+        #       ...
+        #   }
+        #
+        #// csharp_new_line_before_finally = false
+        #   try {
+        #       ...
+        #   } catch (Exception e) {
+        #       ...
+        #   } finally {
+        #        ...
+        #   }
+
+
+#---------------------------------------------------------#
+# Indentation options: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#indent
+csharp_indent_case_contents                                        = true
+        #// csharp_indent_case_contents = true
+        #   switch(c) {
+        #       case Color.Red:
+        #           Console.WriteLine("The color is red");
+        #           break;
+        #       case Color.Blue:
+        #           Console.WriteLine("The color is blue");
+
+        #           break;
+        #       default:
+        #           Console.WriteLine("The color is unknown.");
+        #           break;
+        #   }
+        #   
+        #   // csharp_indent_case_contents = false
+        #   switch(c) {
+        #       case Color.Red:
+        #       Console.WriteLine("The color is red");
+        #       break;
+        #       case Color.Blue:
+        #       Console.WriteLine("The color is blue");
+        #       break;
+        #       default:
+        #       Console.WriteLine("The color is unknown.");
+        #       break;
+        #   }
+
+csharp_indent_switch_labels                                        = true
+        #// csharp_indent_switch_labels = true
+        #   switch(c) {
+        #       case Color.Red:
+        #           Console.WriteLine("The color is red");
+        #           break;
+        #       case Color.Blue:
+        #           Console.WriteLine("The color is blue");
+        #           break;
+        #       default:
+        #           Console.WriteLine("The color is unknown.");
+        #           break;
+        #   }
+        #   
+        #// csharp_indent_switch_labels = false
+        #   switch(c) {
+        #   case Color.Red:
+        #       Console.WriteLine("The color is red");
+        #       break;
+        #   case Color.Blue:
+        #       Console.WriteLine("The color is blue");
+        #       break;
+        #   default:
+        #       Console.WriteLine("The color is unknown.");
+        #       break;
+        #   }
+
+csharp_indent_labels                                               = one_less_than_current
+        #// csharp_indent_labels= flush_left
+        #   class C
+        #   {
+        #       private string MyMethod(...)
+        #       {
+        #           if (...) {
+        #               goto error;
+        #           }
+        #   error:
+        #           throw new Exception(...);
+        #       }
+        #   }
+        #   
+        #// csharp_indent_labels = one_less_than_current
+        #   class C
+        #   {
+        #       private string MyMethod(...)
+        #       {
+        #           if (...) {
+        #               goto error;
+        #           }
+        #       error:
+        #           throw new Exception(...);
+        #       }
+        #   }
+        #   
+        #// csharp_indent_labels= no_change
+        #   class C
+        #   {
+        #       private string MyMethod(...)
+        #       {
+        #           if (...) {
+        #               goto error;
+        #           }
+        #           error:
+        #           throw new Exception(...);
+        #       }
+        #   }
+
+
+#---------------------------------------------------------#
+# Spacing options: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#spacing
+csharp_space_after_cast                                            = true
+      #// csharp_space_after_cast = true
+      #   int y = (int) x;
+      #
+      #// csharp_space_after_cast = false
+      #   int y = (int)x;
+
+csharp_space_after_keywords_in_control_flow_statements             = true
+      # // csharp_space_after_keywords_in_control_flow_statements = true
+      #   for (int i;i<x;i++) { ... }
+      #
+      #// csharp_space_after_keywords_in_control_flow_statements = false
+      #   for(int i;i<x;i++) { ... }
+
+csharp_space_around_binary_operators                               = before_and_after
+      #// csharp_space_around_binary_operators = before_and_after
+      #   return x * (x - y);
+      #
+      #// csharp_space_around_binary_operators = none
+      #   return x*(x-y);
+      #
+      #// csharp_space_around_binary_operators = ignore
+      #   return x  *  (x-y);
+
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+      #// csharp_space_between_method_declaration_parameter_list_parentheses = true
+      #   void Bark( int x ) { ... }
+      #
+      #// csharp_space_between_method_declaration_parameter_list_parentheses = false
+      #   void Bark(int x) { ... }
+     
+csharp_space_between_method_call_parameter_list_parentheses        = false
+      #// csharp_space_between_method_call_parameter_list_parentheses = true
+      #   MyMethod( argument );
+      #
+      #// csharp_space_between_method_call_parameter_list_parentheses = false
+      #   MyMethod(argument);
+
+
+#---------------------------------------------------------#
+# Wrapping options: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference#wrapping
+csharp_preserve_single_line_statements                             = false
+      #//csharp_preserve_single_line_statements = true
+      #   int i = 0; string name = "John";
+      #
+      #//csharp_preserve_single_line_statements = false
+      #   int i = 0;
+      #   string name = "John";
+
+csharp_preserve_single_line_blocks                                 = true
+      #//csharp_preserve_single_line_blocks = true
+      #   public int Foo { get; set; }
+      #
+      #//csharp_preserve_single_line_blocks = false
+      #   public int MyProperty
+      #   {
+      #       get; set;
+      #   }
+
+
+
+###############################
+# Naming Conventions: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-naming-conventions
+###############################
+
+
+#Testing for forbid "_" by beginning of public  - Not working
+#dotnet_naming_rule.public_members_must_be_capitalized.style    = first_word_upper_case_style
+#dotnet_naming_style.first_word_upper_case_style.capitalization = first_word_upper
+
+
+# Style Definitions
+dotnet_naming_style.pascal_case_style.capitalization               = pascal_case
+dotnet_naming_style.camel_case_style.capitalization                = camel_case
+dotnet_naming_style.I_prefix_style.required_prefix                 = I
+dotnet_naming_style.I_prefix_style.capitalization                  = pascal_case
+
+# Use PascalCase for public constant fields
+dotnet_naming_rule.constant_fields_should_be_pascal_case.severity  = warning
+dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols   = constant_fields
+dotnet_naming_rule.constant_fields_should_be_pascal_case.style     = pascal_case_style
+dotnet_naming_symbols.constant_fields.applicable_kinds             = field
+dotnet_naming_symbols.constant_fields.applicable_accessibilities   = public,internal
+dotnet_naming_symbols.constant_fields.required_modifiers           = const
+
+
+# Use PascalCase for private constant fields
+dotnet_naming_rule.private_constant_fields_should_be_pascal_case.severity  = warning
+dotnet_naming_rule.private_constant_fields_should_be_pascal_case.symbols   = private_constant_fields
+dotnet_naming_rule.private_constant_fields_should_be_pascal_case.style     = camel_case_style
+dotnet_naming_symbols.private_constant_fields.applicable_kinds             = field
+dotnet_naming_symbols.private_constant_fields.applicable_accessibilities   = private
+dotnet_naming_symbols.private_constant_fields.required_modifiers           = const
+
+
+# Use PascalCase for public fields
+dotnet_naming_rule.pascal_case_for_public_fields.severity          = warning
+dotnet_naming_rule.pascal_case_for_public_fields.symbols           = public_fields
+dotnet_naming_rule.pascal_case_for_public_fields.style             = pascal_case_style
+dotnet_naming_symbols.public_fields.applicable_kinds               = field
+dotnet_naming_symbols.public_fields.applicable_accessibilities     = public
+#Testing to forbid "_" by beginning of public    - Not working
+#dotnet_naming_style.pascal_case_style.required_prefix                  = A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+
+# Use camelCase for parameter
+dotnet_naming_rule.camel_case_parameter.severity          = warning
+dotnet_naming_rule.camel_case_parameter.symbols           = parameter_camelCase
+dotnet_naming_rule.camel_case_parameter.style             = camel_case_style
+dotnet_naming_symbols.parameter_camelCase.applicable_kinds              = parameter
+dotnet_naming_symbols.parameter_camelCase.applicable_accessibilities    = *
+
+# Use camelCase for  local
+dotnet_naming_rule.camel_case_local.severity          = warning
+dotnet_naming_rule.camel_case_local.symbols           = local_camelCase
+dotnet_naming_rule.camel_case_local.style             = camel_case_style
+dotnet_naming_symbols.local_camelCase.applicable_kinds              = local
+dotnet_naming_symbols.local_camelCase.applicable_accessibilities    = *
+
+# Use camelCase for local functions
+dotnet_naming_rule.camel_case_local_function.severity          = warning
+dotnet_naming_rule.camel_case_local_function.symbols           = local_function_camelCase
+dotnet_naming_rule.camel_case_local_function.style             = camel_case_style
+dotnet_naming_symbols.local_function_camelCase.applicable_kinds              = local_function
+dotnet_naming_symbols.local_function_camelCase.applicable_accessibilities    = *
+
+# Use camelCase for private fields, methods and properties
+dotnet_naming_rule.camel_case_for_private_fields.severity          = warning
+dotnet_naming_rule.camel_case_for_private_fields.symbols           = private_fields
+dotnet_naming_rule.camel_case_for_private_fields.style             = camel_case_style
+dotnet_naming_symbols.private_fields.applicable_kinds              = field,method,property
+dotnet_naming_symbols.private_fields.applicable_accessibilities    = private
+
+# Interfaces must be PascalCase and have an I prefix
+dotnet_naming_rule.interfaces_start_with_I.severity                = warning
+dotnet_naming_rule.interfaces_start_with_I.symbols                 = any_interface
+dotnet_naming_rule.interfaces_start_with_I.style                   = I_prefix_style
+dotnet_naming_symbols.any_interface.applicable_accessibilities     = *
+dotnet_naming_symbols.any_interface.applicable_kinds               = interface
+
+# Classes, structs, methods, enums, events, properties, namespaces, delegates must be PascalCase
+dotnet_naming_rule.general_naming.severity                         = warning
+dotnet_naming_rule.general_naming.symbols                          = general
+dotnet_naming_rule.general_naming.style                            = pascal_case_style
+dotnet_naming_symbols.general.applicable_kinds                     = class,struct,enum,property,method,event,namespace,delegate
+dotnet_naming_symbols.general.applicable_accessibilities           = *
+#Testing to forbid "_" by beginning of public    - Not working
+#dotnet_naming_style.general.required_prefix                  = A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+
+
+# Everything else is Pascal_Case
+dotnet_naming_rule.everything_else_naming.severity                 = warning
+dotnet_naming_rule.everything_else_naming.symbols                  = everything_else
+dotnet_naming_rule.everything_else_naming.style                    = pascal_case_style
+dotnet_naming_symbols.everything_else.applicable_kinds             = *
+dotnet_naming_symbols.everything_else.applicable_accessibilities   = *
+#Testing to forbid "_" by beginning of public    - Not working
+#dotnet_naming_style.everything_else.required_prefix = A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+
