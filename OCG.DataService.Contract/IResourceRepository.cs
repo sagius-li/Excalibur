@@ -39,13 +39,13 @@ namespace OCG.DataService.Contract
             string token, 
             DSResource resource);
 
-        string AddValuesToResource(
+        void AddValuesToResource(
             string token, 
             string id, 
             string attributeName, 
             string[] valuesToAdd);
 
-        string RemoveValuesFromResource(
+        void RemoveValuesFromResource(
             string token, 
             string id, 
             string attributeName, 

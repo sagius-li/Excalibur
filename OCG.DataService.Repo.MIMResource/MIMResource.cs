@@ -21,9 +21,38 @@ namespace OCG.DataService.Repo.MIMResource
             this.schema = schema;
         }
 
-        public string AddValuesToResource(string token, string id, string attributeName, string[] valuesToAdd)
+        public void AddValuesToResource(string token, string id, string attributeName, string[] valuesToAdd)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("id must be specified");
+            }
+            if (string.IsNullOrEmpty(attributeName))
+            {
+                throw new ArgumentException("id must be specified");
+            }
+            if (valuesToAdd == null || valuesToAdd.Length == 0)
+            {
+                throw new ArgumentException("values must be specified");
+            }
+
+            ResourceManagementClient client = Utiles.GetClient(repoCache, token);
+
+            ResourceObject ro = client.GetResource(id, new string[] { attributeName });
+
+            foreach (string value in valuesToAdd)
+            {
+                ro.AddValue(attributeName, value);
+            }
+
+            try
+            {
+                ro.Save();
+            }
+            catch (AuthorizationRequiredException)
+            {
+                throw new AuthZRequiredException("authorization required");
+            }
         }
 
         public string CreateResource(string token, DSResource resource)
@@ -90,7 +119,7 @@ namespace OCG.DataService.Repo.MIMResource
         {
             if (string.IsNullOrEmpty(query))
             {
-                throw new ArgumentException("id must be specified");
+                throw new ArgumentException("xpath query must be specified");
             }
 
             if (attributes == null || attributes.Length == 0)
@@ -160,7 +189,14 @@ namespace OCG.DataService.Repo.MIMResource
 
         public int GetResourceCount(string token, string query)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(query))
+            {
+                throw new ArgumentException("xpath query must be specified");
+            }
+
+            ResourceManagementClient client = Utiles.GetClient(repoCache, token);
+
+            return client.GetResourceCount(query);
         }
 
         public string Initialize(string token, string connection)
@@ -210,9 +246,38 @@ namespace OCG.DataService.Repo.MIMResource
             }
         }
 
-        public string RemoveValuesFromResource(string token, string id, string attributeName, string[] valuesToRemove)
+        public void RemoveValuesFromResource(string token, string id, string attributeName, string[] valuesToRemove)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("id must be specified");
+            }
+            if (string.IsNullOrEmpty(attributeName))
+            {
+                throw new ArgumentException("id must be specified");
+            }
+            if (valuesToRemove == null || valuesToRemove.Length == 0)
+            {
+                throw new ArgumentException("values must be specified");
+            }
+
+            ResourceManagementClient client = Utiles.GetClient(repoCache, token);
+
+            ResourceObject ro = client.GetResource(id, new string[] { attributeName });
+
+            foreach (string value in valuesToRemove)
+            {
+                ro.RemoveValue(attributeName, value);
+            }
+
+            try
+            {
+                ro.Save();
+            }
+            catch (AuthorizationRequiredException)
+            {
+                throw new AuthZRequiredException("authorization required");
+            }
         }
 
         public void UpdateResource(string token, DSResource resource)
