@@ -50,5 +50,16 @@ namespace OCG.DataService.Contract
             string id, 
             string attributeName, 
             string[] valuesToRemove);
+
+        void Approve(
+            string token,
+            string id,
+            bool approve,
+            string reason = null);
+
+        DSResource GetCurrentUser(
+            string token,
+            string accountName,
+            string[] attributes);
     }
 }

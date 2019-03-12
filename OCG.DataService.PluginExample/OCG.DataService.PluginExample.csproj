@@ -6,7 +6,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath></OutputPath>
-    <DocumentationFile>C:\Users\mimadmin\Desktop\OCG.DataService\OCG.DataService.PluginExample\OCG.DataService.PluginExample.xml</DocumentationFile>
+    <DocumentationFile>obj\Debug\netstandard2.0\OCG.DataService.PluginExample.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

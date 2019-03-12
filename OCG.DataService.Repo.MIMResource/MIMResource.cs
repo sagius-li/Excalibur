@@ -55,6 +55,25 @@ namespace OCG.DataService.Repo.MIMResource
             }
         }
 
+        public void Approve(string token, string id, bool approve, string reason = null)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("id must be specified");
+            }
+
+            ResourceManagementClient client = Utiles.GetClient(repoCache, token);
+
+            ResourceObject ro = client.GetResourceByKey("Approval", "Request", id);
+
+            if (ro == null)
+            {
+                throw new ArgumentException($"{id} is not a request");
+            }
+
+            client.Approve(ro, approve, reason);
+        }
+
         public string CreateResource(string token, DSResource resource)
         {
             if (resource == null)
@@ -83,6 +102,25 @@ namespace OCG.DataService.Repo.MIMResource
             ResourceManagementClient client = Utiles.GetClient(repoCache, token);
 
             client.DeleteResource(id);
+        }
+
+        public DSResource GetCurrentUser(string token, string accountName, string[] attributes)
+        {
+            if (attributes == null || attributes.Length == 0)
+            {
+                attributes = new string[] { "DisplayName" };
+            }
+
+            ResourceManagementClient client = Utiles.GetClient(repoCache, token);
+
+            ResourceObject ro = client.GetResourceByKey("Person", "AccountName", accountName);
+
+            if (ro == null)
+            {
+                throw new ArgumentException($"user with account name {accountName} was not found");
+            }
+
+            return Utiles.BuildSimpleResource(ro, attributes.ToList(), null);
         }
 
         public DSResource GetResourceByID(string token, string id, 
