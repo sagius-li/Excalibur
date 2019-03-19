@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
-using OCG.DataService.Contract;
 
 namespace OCG.DataService.Controllers
 {
@@ -17,6 +14,17 @@ namespace OCG.DataService.Controllers
     [ApiController]
     public class GeneralController : ControllerBase
     {
+        private readonly IConfiguration configuration;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="config">Configuration service</param>
+        public GeneralController(IConfiguration config)
+        {
+            this.configuration = config;
+        }
+
         /// <summary>
         /// Gets the git tag name as version number
         /// </summary>
@@ -31,14 +39,14 @@ namespace OCG.DataService.Controllers
             {
                 string result = await Task.Run(() =>
                 {
-                    return ThisAssembly.Git.Tag;
+                    return ThisAssembly.Git.BaseTag;
                 });
 
                 return result;
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e.Message);
+                return "0.0.0";
             }
         }
 
@@ -88,14 +96,15 @@ namespace OCG.DataService.Controllers
             {
                 string result = await Task.Run(() =>
                 {
-                    return ConfigManager.GetAppSetting("EncryptionKey", string.Empty);
+                    string key = this.configuration.GetValue<string>("EncryptionKey");
+                    return string.IsNullOrEmpty(key) ? string.Empty : key;
                 });
 
                 return result;
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e.Message);
+                return string.Empty;
             }
         }
     }

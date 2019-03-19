@@ -118,7 +118,7 @@ namespace OCG.DataService
             {
                 c.SwaggerDoc("v1", new Info
                 {
-                    Version = ThisAssembly.Git.Tag,
+                    Version = ThisAssembly.Git.BaseTag,
                     Title = "OCG Data Service",
                     Description = "REST API data service for managing MIM Portal data"
                 });
