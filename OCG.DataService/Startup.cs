@@ -151,6 +151,9 @@ namespace OCG.DataService
 
             container.Verify();
 
+            // Middleware to enable parsing of culture header
+            app.UseRequestLocalization();
+
             // Middleware to handle exceptions, which cannot be catched in controller
             app.UseExceptionHandler(appError =>
             {
