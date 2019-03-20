@@ -5,7 +5,6 @@ using System.Net;
 using Lithnet.ResourceManagement.Client;
 using Microsoft.ResourceManagement.WebServices.WSEnumeration;
 using OCG.DataService.Contract;
-using OCG.Security.Operation;
 
 namespace OCG.DataService.Repo.MIMResource
 {
@@ -259,7 +258,15 @@ namespace OCG.DataService.Repo.MIMResource
                     ResourceManagementClient client = new ResourceManagementClient();
                     client.RefreshSchema();
 
-                    return this.repoCache.Set<ResourceManagementClient>(client);
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        return this.repoCache.Set<ResourceManagementClient>(client);
+                    }
+                    else
+                    {
+                        this.repoCache.Set<ResourceManagementClient>(token, client);
+                        return token;
+                    }
                 }
                 else
                 {
@@ -288,7 +295,15 @@ namespace OCG.DataService.Repo.MIMResource
                         client.RefreshSchema();
                     }
 
-                    return this.repoCache.Set<ResourceManagementClient>(client);
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        return this.repoCache.Set<ResourceManagementClient>(client);
+                    }
+                    else
+                    {
+                        this.repoCache.Set<ResourceManagementClient>(token, client);
+                        return token;
+                    }
                 }
             }
         }
