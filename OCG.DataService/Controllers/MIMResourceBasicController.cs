@@ -2,30 +2,33 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using OCG.DataService.Contract;
 
 namespace OCG.DataService.Controllers
 {
     /// <summary>
-    /// Manage MIM Portal data using windows authentication
+    /// Manage MIM Portal data using basic authentication (with user name and password)
     /// </summary>
-    [Route("api/mim/win/resources")]
+    [Route("api/mim/basic/resources")]
     [ApiController]
-    public class MIMResourceWinController : ControllerBase
+    public class MIMResourceBasicController : ControllerBase
     {
+        private readonly IConfiguration configuration;
+
         private readonly IResourceRepository repo;
 
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="config">Configuration Service</param>
         /// <param name="repository">Repository to manage MIM Portal data</param>
-        public MIMResourceWinController(IResourceRepository repository)
+        public MIMResourceBasicController(IConfiguration config, IResourceRepository repository)
         {
+            this.configuration = config;
             this.repo = repository;
         }
 
@@ -33,23 +36,22 @@ namespace OCG.DataService.Controllers
         /// Initializes the service and cache / refresh the resource management client with its schema
         /// </summary>
         /// <param name="token">Token of the resource management client, if exists</param>
+        /// <param name="connection">Connection info, e.g. baseaddress://localhost:5725;domain:contoso;username:mimadmin; password:kdk6ocXLmUG3JOS/xQ1g7w==</param>
         /// <returns>A guid as token referenced to the cached resource management client</returns>
         /// <response code="200">Request succeeded</response>
-        [Authorize]
         [HttpGet("init")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<string>> Initialize([FromQuery] string token)
+        public async Task<ActionResult<string>> Initialize(
+            [FromQuery] string token,
+            [FromQuery, Required] string connection)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity)User.Identity).Impersonate();
-
                 string result = await Task.Run(() =>
                 {
-                    return this.repo.Initialize(token);
+                    return this.repo.Initialize(token, connection,
+                        ConfigurationManager.GetValue<string>(configuration, "EncryptionKey", ""));
                 });
 
                 return result;
@@ -58,14 +60,6 @@ namespace OCG.DataService.Controllers
             {
                 return BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
-
         }
 
         /// <summary>
@@ -81,29 +75,24 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="id" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResource>> GetResourceByID(
-            [FromQuery, Required] string token, 
-            [FromRoute] string id, 
-            [FromQuery] string attributes, 
-            [FromQuery] string culture = "en-US", 
-            [FromQuery] bool resolveRef = false, 
+            [FromQuery, Required] string token,
+            [FromRoute] string id,
+            [FromQuery] string attributes,
+            [FromQuery] string culture = "en-US",
+            [FromQuery] bool resolveRef = false,
             [FromQuery] string format = "simple")
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity)User.Identity).Impersonate();
-
                 DSResource result = await Task.Run(() =>
                 {
-                    string[] attributeArray = string.IsNullOrEmpty(attributes) ? null : 
+                    string[] attributeArray = string.IsNullOrEmpty(attributes) ? null :
                         attributes.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray();
 
                     bool includePermission = format.Equals("full", StringComparison.OrdinalIgnoreCase) ? true : false;
@@ -125,73 +114,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the MIM Portal resource of the current logged in user
-        /// </summary>
-        /// <param name="token">Token of the resource management client, generated by init mothed</param>
-        /// <param name="attributes">The attributes to fetch, if not specified, only DisplayName will be fetched. Format: &lt;AttributeName&gt;,...</param>
-        /// <returns>A single resource object</returns>
-        /// <response code="200">Request succeeded</response>
-        /// <response code="400"><paramref name="token" /> is not present, or resource management client exception</response>
-        /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
-        [HttpGet("currentuser")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesDefaultResponseType]
-        public async Task<ActionResult<DSResource>> GetCurrentUser(
-            [FromQuery, Required] string token,
-            [FromQuery] string attributes)
-        {
-            WindowsImpersonationContext wic = null;
-
-            try
-            {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
-                DSResource result = await Task.Run(() =>
-                {
-                    string[] attributeArray = string.IsNullOrEmpty(attributes) ? null :
-                        attributes.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray();
-
-                    string userName = User.Identity.Name;
-                    int pos = userName.IndexOf(@"\");
-                    string accountName = userName.Substring(pos + 1);
-
-                    return this.repo.GetCurrentUser(token, accountName, attributeArray);
-                });
-
-                return result;
-            }
-            catch (ArgumentException e)
-            {
-                return this.BadRequest(e.Message);
-            }
-            catch (InvalidOperationException e)
-            {
-                return this.Conflict(e.Message);
-            }
-            catch (Exception e)
-            {
-                return this.BadRequest(e.Message);
-            }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -208,14 +130,13 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="query" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResourceSet>> GetResourceByQuery(
-            [FromQuery, Required] string token, 
+            [FromQuery, Required] string token,
             [FromQuery, Required] string query,
             [FromQuery] string attributes,
             [FromQuery] int pageSize = 0,
@@ -223,12 +144,8 @@ namespace OCG.DataService.Controllers
             [FromQuery] bool resolveRef = false,
             [FromQuery] string orderBy = null)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 DSResourceSet result = await Task.Run(() =>
                 {
                     string[] attributeArray = string.IsNullOrEmpty(attributes) ? null :
@@ -278,13 +195,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -296,7 +206,6 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="id" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -306,12 +215,8 @@ namespace OCG.DataService.Controllers
             [FromQuery, Required] string token,
             [FromRoute] string id)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 await Task.Run(() =>
                 {
                     this.repo.DeleteResource(token, id);
@@ -331,13 +236,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -349,7 +247,6 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="resource" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -360,12 +257,8 @@ namespace OCG.DataService.Controllers
             [FromQuery, Required] string token,
             [FromBody] DSResource resource)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 string result = await Task.Run(() =>
                 {
                     return this.repo.CreateResource(token, resource);
@@ -385,13 +278,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -404,7 +290,6 @@ namespace OCG.DataService.Controllers
         /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="resource" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpPatch]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
@@ -414,12 +299,8 @@ namespace OCG.DataService.Controllers
             [FromQuery, Required] string token,
             [FromBody] DSResource resource)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 await Task.Run(() =>
                 {
                     this.repo.UpdateResource(token, resource);
@@ -443,13 +324,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -461,7 +335,6 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="query" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpGet("count")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -471,12 +344,8 @@ namespace OCG.DataService.Controllers
             [FromQuery, Required] string token,
             [FromQuery, Required] string query)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 int result = await Task.Run(() =>
                 {
                     return this.repo.GetResourceCount(token, query);
@@ -496,13 +365,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -517,7 +379,6 @@ namespace OCG.DataService.Controllers
         /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="id" />, <paramref name="token" />, <paramref name="attributeName" /> or <paramref name="valuesToAdd" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpPost("values/add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
@@ -530,12 +391,8 @@ namespace OCG.DataService.Controllers
             [FromQuery, Required] string attributeName,
             [FromQuery, Required] string[] valuesToAdd)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 await Task.Run(() =>
                 {
                     this.repo.AddValuesToResource(token, id, attributeName, valuesToAdd);
@@ -559,13 +416,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -580,7 +430,6 @@ namespace OCG.DataService.Controllers
         /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="id" />, <paramref name="token" />, <paramref name="attributeName" /> or <paramref name="valuesToAdd" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpPost("values/remove")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
@@ -593,12 +442,8 @@ namespace OCG.DataService.Controllers
             [FromQuery, Required] string attributeName,
             [FromQuery, Required] string[] valuesToRemove)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 await Task.Run(() =>
                 {
                     this.repo.RemoveValuesFromResource(token, id, attributeName, valuesToRemove);
@@ -622,13 +467,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
 
         /// <summary>
@@ -642,7 +480,6 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="id" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
-        [Authorize]
         [HttpPost("approve/{id}/{approve}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -654,12 +491,8 @@ namespace OCG.DataService.Controllers
             [FromRoute] bool approve,
             [FromQuery] string reason = null)
         {
-            WindowsImpersonationContext wic = null;
-
             try
             {
-                wic = ((WindowsIdentity) User.Identity).Impersonate();
-
                 await Task.Run(() =>
                 {
                     this.repo.Approve(token, id, approve, reason);
@@ -679,14 +512,6 @@ namespace OCG.DataService.Controllers
             {
                 return this.BadRequest(e.Message);
             }
-            finally
-            {
-                if (wic != null)
-                {
-                    wic.Undo();
-                }
-            }
         }
-
     }
 }
