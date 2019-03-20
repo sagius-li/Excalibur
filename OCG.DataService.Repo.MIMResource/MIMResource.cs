@@ -49,9 +49,9 @@ namespace OCG.DataService.Repo.MIMResource
             {
                 ro.Save();
             }
-            catch (AuthorizationRequiredException)
+            catch (AuthorizationRequiredException e)
             {
-                throw new AuthZRequiredException("authorization required");
+                throw new AuthZRequiredException(e.Message);
             }
         }
 
@@ -87,9 +87,15 @@ namespace OCG.DataService.Repo.MIMResource
 
             Utiles.BuildResourceObject(resource, ref ro);
 
-            ro.Save();
-
-            return ro.ObjectID.Value;
+            try
+            {
+                ro.Save();
+                return ro.ObjectID.Value;
+            }
+            catch (AuthorizationRequiredException e)
+            {
+                throw new AuthZRequiredException(e.Message);
+            }
         }
 
         public void DeleteResource(string token, string id)
@@ -312,9 +318,9 @@ namespace OCG.DataService.Repo.MIMResource
             {
                 ro.Save();
             }
-            catch (AuthorizationRequiredException)
+            catch (AuthorizationRequiredException e)
             {
-                throw new AuthZRequiredException("authorization required");
+                throw new AuthZRequiredException(e.Message);
             }
         }
 
@@ -342,9 +348,9 @@ namespace OCG.DataService.Repo.MIMResource
             {
                 ro.Save();
             }
-            catch (AuthorizationRequiredException)
+            catch (AuthorizationRequiredException e)
             {
-                throw new AuthZRequiredException("authorization required");
+                throw new AuthZRequiredException(e.Message);
             }
         }
     }

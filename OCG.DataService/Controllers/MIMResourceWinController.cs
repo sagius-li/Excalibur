@@ -347,13 +347,14 @@ namespace OCG.DataService.Controllers
         /// <param name="resource">The resource to be created. ObjectType must exist as a property</param>
         /// <returns>The ObjectID of the created resource</returns>
         /// <response code="200">Request succeeded</response>
+        /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="resource" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status417ExpectationFailed)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> CreateResource(
@@ -380,6 +381,10 @@ namespace OCG.DataService.Controllers
             catch (InvalidOperationException e)
             {
                 return this.Conflict(e.Message);
+            }
+            catch (AuthZRequiredException e)
+            {
+                return Accepted(e.Message);
             }
             catch (Exception e)
             {
@@ -408,6 +413,7 @@ namespace OCG.DataService.Controllers
         [HttpPatch]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> UpdateResource(
