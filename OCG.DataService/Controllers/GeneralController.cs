@@ -96,8 +96,7 @@ namespace OCG.DataService.Controllers
             {
                 string result = await Task.Run(() =>
                 {
-                    string key = this.configuration.GetValue<string>("EncryptionKey");
-                    return string.IsNullOrEmpty(key) ? string.Empty : key;
+                    return ConfigurationManager.GetValue<string>(this.configuration, "EncryptionKey", string.Empty);
                 });
 
                 return result;

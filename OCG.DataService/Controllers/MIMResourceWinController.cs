@@ -50,7 +50,7 @@ namespace OCG.DataService.Controllers
 
                 string result = await Task.Run(() =>
                 {
-                    return this.repo.Initialize(token, string.Empty);
+                    return this.repo.Initialize(token);
                 });
 
                 return result;

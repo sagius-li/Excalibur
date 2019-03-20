@@ -4,7 +4,10 @@ namespace OCG.DataService.Contract
 {
     public interface IResourceRepository
     {
-        string Initialize(string token, string connection);
+        string Initialize(
+            string token,
+            string connection = "",
+            string encryptionKey = "");
 
         DSResource GetResourceByID(
             string token, 

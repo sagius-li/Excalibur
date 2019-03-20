@@ -6,16 +6,10 @@ namespace OCG.DataService.Contract
 {
     public class ConnectionInfo
     {
-        public string BaseAddress { get; set; }
-        public string Domain { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string EncryptionKey { get; set; }
-
-        public ConnectionInfo()
-        {
-            this.EncryptionKey = ConfigManager.GetAppSetting("EncryptionKey", string.Empty);
-        }
+        public string BaseAddress = string.Empty;
+        public string Domain = string.Empty;
+        public string UserName = string.Empty;
+        public string Password = string.Empty;
 
         public static ConnectionInfo BuildConnectionInfo(string connection)
         {
@@ -59,18 +53,7 @@ namespace OCG.DataService.Contract
                 }
             }
 
-            ci.EncryptionKey = ConfigManager.GetAppSetting("EncryptionKey", string.Empty);
-
             return ci;
-        }
-    }
-
-    public class ConfigManager
-    {
-        public static string GetAppSetting(string key, string defaultValue = null)
-        {
-            return string.IsNullOrEmpty(ConfigurationManager.AppSettings[key]) ?
-                defaultValue : ConfigurationManager.AppSettings[key];
         }
     }
 

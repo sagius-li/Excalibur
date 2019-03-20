@@ -237,7 +237,7 @@ namespace OCG.DataService.Repo.MIMResource
             return client.GetResourceCount(query);
         }
 
-        public string Initialize(string token, string connection)
+        public string Initialize(string token, string connection = "", string encryptionKey = "")
         {
             if (!string.IsNullOrEmpty(token) && this.repoCache.Contains(token))
             {
@@ -263,7 +263,7 @@ namespace OCG.DataService.Repo.MIMResource
                         !string.IsNullOrEmpty(ci.UserName) && !string.IsNullOrEmpty(ci.Password))
                     {
                         cred = new NetworkCredential(ci.UserName,
-                            GenericAESCryption.DecryptString(ci.Password, ci.EncryptionKey), ci.Domain);
+                            GenericAESCryption.DecryptString(ci.Password, encryptionKey), ci.Domain);
                     }
 
                     if (cred == null)
