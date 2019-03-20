@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
+using OCG.DataService.Contract;
 
 namespace OCG.DataService.Controllers
 {
@@ -16,13 +17,17 @@ namespace OCG.DataService.Controllers
     {
         private readonly IConfiguration configuration;
 
+        private readonly ICryptograph cryptograph;
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="config">Configuration service</param>
-        public GeneralController(IConfiguration config)
+        /// <param name="crypto">Cryptograph service</param>
+        public GeneralController(IConfiguration config, ICryptograph crypto)
         {
             this.configuration = config;
+            this.cryptograph = crypto;
         }
 
         /// <summary>
@@ -87,7 +92,7 @@ namespace OCG.DataService.Controllers
         /// </summary>
         /// <returns>The encryption key</returns>
         /// <response code="200">Request succeeded</response>
-        [HttpGet("key")]
+        [HttpGet("encryptionkey")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetEncryptionKey()
@@ -96,7 +101,9 @@ namespace OCG.DataService.Controllers
             {
                 string result = await Task.Run(() =>
                 {
-                    return ConfigurationManager.GetValue<string>(this.configuration, "EncryptionKey", string.Empty);
+                    string key =
+                        ConfigurationManager.GetValue<string>(this.configuration, "EncryptionKey", string.Empty);
+                    return string.IsNullOrEmpty(key) ? string.Empty : this.cryptograph.Encrypt(key);
                 });
 
                 return result;

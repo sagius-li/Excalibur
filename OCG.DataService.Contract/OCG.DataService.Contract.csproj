@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DataContract.cs" />
     <Compile Include="ICache.cs" />
+    <Compile Include="ICryptograph.cs" />
     <Compile Include="IResourceRepository.cs" />
     <Compile Include="ISchema.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -218,6 +218,7 @@ namespace OCG.DataService
             // Add application services
             container.Register<IResourceRepository, MIMResource>(Lifestyle.Singleton);
             container.Register<ISchema, MIMSchema>(Lifestyle.Singleton);
+            container.Register<ICryptograph, AESCryptograph>(Lifestyle.Singleton);
             container.Register<ICache>(() =>
             {
                 return new ResourceCache(60);

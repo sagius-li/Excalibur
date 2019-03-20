@@ -15,10 +15,13 @@ namespace OCG.DataService.Repo.MIMResource
 
         private readonly ISchema schema;
 
-        public MIMResource(ICache cache, ISchema schema)
+        private readonly ICryptograph cryptograph;
+
+        public MIMResource(ICache cache, ISchema schema, ICryptograph crypto)
         {
             this.repoCache = cache;
             this.schema = schema;
+            this.cryptograph = crypto;
         }
 
         public void AddValuesToResource(string token, string id, string attributeName, string[] valuesToAdd)
@@ -269,7 +272,7 @@ namespace OCG.DataService.Repo.MIMResource
                         !string.IsNullOrEmpty(ci.UserName) && !string.IsNullOrEmpty(ci.Password))
                     {
                         cred = new NetworkCredential(ci.UserName,
-                            GenericAESCryption.DecryptString(ci.Password, encryptionKey), ci.Domain);
+                            this.cryptograph.Decrypt(ci.Password, encryptionKey), ci.Domain);
                     }
 
                     if (cred == null)

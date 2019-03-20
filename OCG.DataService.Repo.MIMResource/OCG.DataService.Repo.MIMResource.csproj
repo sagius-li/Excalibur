@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AESCryptograph.cs" />
     <Compile Include="MIMResource.cs" />
     <Compile Include="MIMSchema.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
