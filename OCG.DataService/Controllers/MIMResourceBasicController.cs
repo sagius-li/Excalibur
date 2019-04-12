@@ -43,7 +43,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> Initialize(
-            [FromQuery] string token,
+            [FromHeader] string token,
             [FromQuery, Required] string connection)
         {
             try
@@ -81,7 +81,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResource>> GetResourceByID(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromRoute] string id,
             [FromQuery] string attributes,
             [FromQuery] string culture = "en-US",
@@ -136,7 +136,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResourceSet>> GetResourceByQuery(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromQuery, Required] string query,
             [FromQuery] string attributes,
             [FromQuery] int pageSize = 0,
@@ -212,7 +212,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> DeleteResource(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromRoute] string id)
         {
             try
@@ -255,7 +255,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> CreateResource(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromBody] DSResource resource)
         {
             try
@@ -302,7 +302,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> UpdateResource(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromBody] DSResource resource)
         {
             try
@@ -347,7 +347,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<int>> GetResourceCount(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromQuery, Required] string query)
         {
             try
@@ -392,7 +392,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> AddValuesToResource(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromQuery, Required] string id,
             [FromQuery, Required] string attributeName,
             [FromQuery, Required] string[] valuesToAdd)
@@ -443,7 +443,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> RemoveValuesFromResource(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromQuery, Required] string id,
             [FromQuery, Required] string attributeName,
             [FromQuery, Required] string[] valuesToRemove)
@@ -492,7 +492,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> Approve(
-            [FromQuery, Required] string token,
+            [FromHeader, Required] string token,
             [FromRoute] string id,
             [FromRoute] bool approve,
             [FromQuery] string reason = null)

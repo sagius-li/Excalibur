@@ -81,7 +81,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResource>> GetResourceByID(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromRoute] string id,
             [FromQuery] string attributes,
             [FromQuery] string culture = "en-US",
@@ -138,7 +138,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResource>> GetCurrentWinUser(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromQuery] string attributes)
         {
             string accountName;
@@ -213,7 +213,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResource>> GetCurrentBasicUser(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromQuery, Required] string accountName,
             [FromQuery] string attributes)
         {
@@ -269,7 +269,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DSResourceSet>> GetResourceByQuery(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromQuery, Required] string query,
             [FromQuery] string attributes,
             [FromQuery] int pageSize = 0,
@@ -351,7 +351,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> DeleteResource(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromRoute] string id)
         {
             try
@@ -400,7 +400,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> CreateResource(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromBody] DSResource resource)
         {
             try
@@ -453,7 +453,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> UpdateResource(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromBody] DSResource resource)
         {
             try
@@ -504,7 +504,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<int>> GetResourceCount(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromQuery, Required] string query)
         {
             try
@@ -555,7 +555,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> AddValuesToResource(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromQuery, Required] string id,
             [FromQuery, Required] string attributeName,
             [FromQuery, Required] string[] valuesToAdd)
@@ -612,7 +612,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> RemoveValuesFromResource(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromQuery, Required] string id,
             [FromQuery, Required] string attributeName,
             [FromQuery, Required] string[] valuesToRemove)
@@ -668,7 +668,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> Approve(
-            [FromQuery, Required] string secret,
+            [FromHeader, Required] string secret,
             [FromRoute] string id,
             [FromRoute] bool approve,
             [FromQuery] string reason = null)
