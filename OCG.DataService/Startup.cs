@@ -170,8 +170,16 @@ namespace OCG.DataService
                 });
             });
 
+            string[] allowedOrigins = Configuration.GetSection("AllowedOrigins").Get<string[]>();
+            if (allowedOrigins == null)
+            {
+                allowedOrigins = new string[] {
+                    "http://localhost:20466",
+                    "http://localhost:4200",
+                    "http://localhost:6768" };
+            }
             app.UseCors(options => options
-                .AllowAnyOrigin()
+                .WithOrigins(allowedOrigins)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
