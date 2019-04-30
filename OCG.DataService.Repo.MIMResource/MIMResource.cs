@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Net;
 using Lithnet.ResourceManagement.Client;
@@ -278,22 +279,47 @@ namespace OCG.DataService.Repo.MIMResource
                     if (!string.IsNullOrEmpty(ci.Domain) &&
                         !string.IsNullOrEmpty(ci.UserName) && !string.IsNullOrEmpty(ci.Password))
                     {
-                        cred = new NetworkCredential(ci.UserName,
+                        bool valid = false;
+                        using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
+                        {
+                            valid = context.ValidateCredentials(ci.UserName, this.cryptograph.Decrypt(ci.Password, encryptionKey));
+                        }
+                        if (valid)
+                        {
+                            cred = new NetworkCredential(ci.UserName,
                             this.cryptograph.Decrypt(ci.Password, encryptionKey), ci.Domain);
+                        }
+                        else
+                        {
+                            throw new Exception("invalid user");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("invalid user");
                     }
 
                     if (cred == null)
                     {
-                        client = string.IsNullOrEmpty(ci.BaseAddress) ?
-                            new ResourceManagementClient() : new ResourceManagementClient(ci.BaseAddress);
-                        client.RefreshSchema();
+                        throw new Exception("invalid user");
                     }
-                    else
-                    {
-                        client = string.IsNullOrEmpty(ci.BaseAddress) ?
+
+                    client = string.IsNullOrEmpty(ci.BaseAddress) ?
                             new ResourceManagementClient(cred) : new ResourceManagementClient(ci.BaseAddress, cred);
-                        client.RefreshSchema();
-                    }
+                    client.RefreshSchema();
+
+                    //if (cred == null)
+                    //{
+                    //    client = string.IsNullOrEmpty(ci.BaseAddress) ?
+                    //        new ResourceManagementClient() : new ResourceManagementClient(ci.BaseAddress);
+                    //    client.RefreshSchema();
+                    //}
+                    //else
+                    //{
+                    //    client = string.IsNullOrEmpty(ci.BaseAddress) ?
+                    //        new ResourceManagementClient(cred) : new ResourceManagementClient(ci.BaseAddress, cred);
+                    //    client.RefreshSchema();
+                    //}
 
                     if (string.IsNullOrEmpty(token))
                     {
