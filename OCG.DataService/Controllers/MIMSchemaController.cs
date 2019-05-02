@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace OCG.DataService.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Dictionary<string, DSAttribute>>> GetSchema(
-            [FromQuery, Required] string token, [FromRoute] string typeName, [FromQuery] string culture = "en-US")
+            [FromHeader, Required] string token, [FromRoute] string typeName, [FromQuery] string culture = "en-US")
         {
             try
             {

@@ -37,6 +37,7 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         [Authorize]
         [HttpGet("init")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> Initialize([FromHeader] string token)
@@ -83,6 +84,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpGet("{id}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -150,6 +152,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpGet("search")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -238,6 +241,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpDelete("{id}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -292,6 +296,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpPost]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -351,6 +356,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpPatch]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -409,6 +415,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpGet("count")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -465,6 +472,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpPost("values/add")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -528,6 +536,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpPost("values/remove")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -590,6 +599,7 @@ namespace OCG.DataService.Controllers
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [Authorize]
         [HttpPost("approve/{id}/{approve}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]

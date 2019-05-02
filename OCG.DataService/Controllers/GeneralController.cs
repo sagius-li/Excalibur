@@ -36,6 +36,7 @@ namespace OCG.DataService.Controllers
         /// <returns>The version number</returns>
         /// <response code="200">Request succeeded</response>
         [HttpGet("version")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetVersion()
@@ -61,6 +62,7 @@ namespace OCG.DataService.Controllers
         /// <returns>The browser language code</returns>
         /// <response code="200">Request succeeded</response>
         [HttpGet("language")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetLanguage()
@@ -93,6 +95,7 @@ namespace OCG.DataService.Controllers
         /// <returns>The encryption key</returns>
         /// <response code="200">Request succeeded</response>
         [HttpGet("encryptionkey")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetEncryptionKey()

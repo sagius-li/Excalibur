@@ -77,6 +77,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="id" /> or <paramref name="secret" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="secret" /> is invalid or expired</response>
         [HttpGet("{id}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
@@ -134,6 +135,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="secret" /> is not present, or resource management client exception</response>
         [Authorize]
         [HttpGet("winuser")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
@@ -209,6 +211,7 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="secret" /> is not present, or resource management client exception</response>
         [HttpGet("basicuser")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
@@ -265,6 +268,7 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="query" /> or <paramref name="secret" /> is not present, or resource management client exception</response>
         [HttpGet("search")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
@@ -347,6 +351,7 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="id" /> or <paramref name="secret" /> is not present, or resource management client exception</response>
         [HttpDelete("{id}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
@@ -395,6 +400,7 @@ namespace OCG.DataService.Controllers
         /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="resource" /> or <paramref name="secret" /> is not present, or resource management client exception</response>
         [HttpPost]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -448,6 +454,7 @@ namespace OCG.DataService.Controllers
         /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="resource" /> or <paramref name="secret" /> is not present, or resource management client exception</response>
         [HttpPatch]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -500,6 +507,7 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="query" /> or <paramref name="secret" /> is not present, or resource management client exception</response>
         [HttpGet("count")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
@@ -550,6 +558,7 @@ namespace OCG.DataService.Controllers
         /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="id" />, <paramref name="secret" />, <paramref name="attributeName" /> or <paramref name="valuesToAdd" /> is not present, or resource management client exception</response>
         [HttpPost("values/add")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -607,6 +616,7 @@ namespace OCG.DataService.Controllers
         /// <response code="202">Request accepted but need authorization</response>
         /// <response code="400"><paramref name="id" />, <paramref name="secret" />, <paramref name="attributeName" /> or <paramref name="valuesToAdd" /> is not present, or resource management client exception</response>
         [HttpPost("values/remove")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -663,6 +673,7 @@ namespace OCG.DataService.Controllers
         /// <response code="200">Request succeeded</response>
         /// <response code="400"><paramref name="id" /> or <paramref name="secret" /> is not present, or resource management client exception</response>
         [HttpPost("approve/{id}/{approve}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]

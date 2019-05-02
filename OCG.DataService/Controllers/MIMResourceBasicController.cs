@@ -40,6 +40,7 @@ namespace OCG.DataService.Controllers
         /// <returns>A guid as token referenced to the cached resource management client</returns>
         /// <response code="200">Request succeeded</response>
         [HttpGet("init")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> Initialize(
@@ -76,6 +77,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="id" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpGet("{id}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -131,6 +133,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="query" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpGet("search")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -207,6 +210,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="id" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpDelete("{id}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -249,6 +253,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="resource" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpPost]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -296,6 +301,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="resource" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpPatch]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -342,6 +348,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="query" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpGet("count")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -386,6 +393,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="id" />, <paramref name="token" />, <paramref name="attributeName" /> or <paramref name="valuesToAdd" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpPost("values/add")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -437,6 +445,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="id" />, <paramref name="token" />, <paramref name="attributeName" /> or <paramref name="valuesToAdd" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpPost("values/remove")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -487,6 +496,7 @@ namespace OCG.DataService.Controllers
         /// <response code="400"><paramref name="id" /> or <paramref name="token" /> is not present, or resource management client exception</response>
         /// <response code="409"><paramref name="token" /> is invalid or expired</response>
         [HttpPost("approve/{id}/{approve}")]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
