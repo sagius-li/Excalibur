@@ -552,7 +552,7 @@ namespace OCG.DataService.Controllers
         /// <param name="secret">A secret code to enable the call of methods in admin mode</param>
         /// <param name="id">The ObjectID of the resource</param>
         /// <param name="attributeName">The multivalued attribute name</param>
-        /// <param name="valuesToAdd">Values to be added to the attribute</param>
+        /// <param name="valuesToAdd">The values to add, seperated with comma. Format: &lt;value&gt;,...</param>
         /// <returns></returns>
         /// <response code="200">Request succeeded</response>
         /// <response code="202">Request accepted but need authorization</response>
@@ -567,7 +567,7 @@ namespace OCG.DataService.Controllers
             [FromHeader, Required] string secret,
             [FromQuery, Required] string id,
             [FromQuery, Required] string attributeName,
-            [FromQuery, Required] string[] valuesToAdd)
+            [FromQuery, Required] string valuesToAdd)
         {
             try
             {
@@ -585,7 +585,10 @@ namespace OCG.DataService.Controllers
                         throw new ArgumentException("invalid secret");
                     }
 
-                    this.repo.AddValuesToResource(secretToken, id, attributeName, valuesToAdd);
+                    string[] valueArray = string.IsNullOrEmpty(valuesToAdd) ? null :
+                        valuesToAdd.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray();
+
+                    this.repo.AddValuesToResource(secretToken, id, attributeName, valueArray);
                 });
 
                 return Ok();
@@ -610,11 +613,11 @@ namespace OCG.DataService.Controllers
         /// <param name="secret">A secret code to enable the call of methods in admin mode</param>
         /// <param name="id">The ObjectID of the resource</param>
         /// <param name="attributeName">The multivalued attribute name</param>
-        /// <param name="valuesToRemove">Values to be removed from the attribute</param>
+        /// <param name="valuesToRemove">The values to remove, seperated with comma. Format: &lt;value&gt;,...</param>
         /// <returns></returns>
         /// <response code="200">Request succeeded</response>
         /// <response code="202">Request accepted but need authorization</response>
-        /// <response code="400"><paramref name="id" />, <paramref name="secret" />, <paramref name="attributeName" /> or <paramref name="valuesToAdd" /> is not present, or resource management client exception</response>
+        /// <response code="400"><paramref name="id" />, <paramref name="secret" />, <paramref name="attributeName" /> or <paramref name="valuesToRemove" /> is not present, or resource management client exception</response>
         [HttpPost("values/remove")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -625,7 +628,7 @@ namespace OCG.DataService.Controllers
             [FromHeader, Required] string secret,
             [FromQuery, Required] string id,
             [FromQuery, Required] string attributeName,
-            [FromQuery, Required] string[] valuesToRemove)
+            [FromQuery, Required] string valuesToRemove)
         {
             try
             {
@@ -643,7 +646,10 @@ namespace OCG.DataService.Controllers
                         throw new ArgumentException("invalid secret");
                     }
 
-                    this.repo.RemoveValuesFromResource(secretToken, id, attributeName, valuesToRemove);
+                    string[] valueArray = string.IsNullOrEmpty(valuesToRemove) ? null :
+                        valuesToRemove.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray();
+
+                    this.repo.RemoveValuesFromResource(secretToken, id, attributeName, valueArray);
                 });
 
                 return Ok();
