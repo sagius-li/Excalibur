@@ -8,6 +8,73 @@ namespace OCG.DataService.Repo.MIMResource
 {
     public class Utiles
     {
+        private static void buildAttribute(string attributeName, AttributeValue value, ResourceManagementClient client, ref DSResource result)
+        {
+            if (value != null)
+            {
+                if (value.IsNull)
+                {
+                    result.Add(attributeName, null);
+                }
+                else
+                {
+                    if (value.Attribute.IsMultivalued)
+                    {
+                        if (value.Attribute.Type.ToString().Equals("Reference"))
+                        {
+                            if (client != null && !value.AttributeName.Equals("ObjectID"))
+                            {
+                                List<Dictionary<string, object>> refValues = new List<Dictionary<string, object>>();
+                                foreach (string refValue in value.StringValues)
+                                {
+                                    ResourceObject refObject = client.GetResource(refValue, new string[] { "DisplayName" });
+                                    refValues.Add(new Dictionary<string, object>
+                                        {
+                                            { "DisplayName", refObject.DisplayName },
+                                            { "ObjectID", refObject.ObjectID.Value },
+                                            { "ObjectType", refObject.ObjectType.ToString() }
+                                        });
+                                }
+                                result.Add(attributeName, refValues.ToArray());
+                            }
+                            else
+                            {
+                                result.Add(attributeName, value.StringValues);
+                            }
+                        }
+                        else
+                        {
+                            result.Add(attributeName, value.Values);
+                        }
+                    }
+                    else
+                    {
+                        if (value.Attribute.Type.ToString().Equals("Reference"))
+                        {
+                            if (client != null && !value.AttributeName.Equals("ObjectID"))
+                            {
+                                ResourceObject refObject = client.GetResource(value.StringValue, new string[] { "DisplayName" });
+                                result.Add(attributeName, new Dictionary<string, object>
+                                    {
+                                        { "DisplayName", refObject.DisplayName },
+                                        { "ObjectID", refObject.ObjectID.Value },
+                                        { "ObjectType", refObject.ObjectType.ToString() }
+                                    });
+                            }
+                            else
+                            {
+                                result.Add(attributeName, value.StringValue);
+                            }
+                        }
+                        else
+                        {
+                            result.Add(attributeName, value.Value);
+                        }
+                    }
+                }
+            }
+        }
+
         public static ResourceManagementClient GetClient(ICache cache, string token)
         {
             if (cache == null)
@@ -36,98 +103,42 @@ namespace OCG.DataService.Repo.MIMResource
                 throw new ArgumentException("resource object must be specified");
             }
 
-            if (attributesToLoad == null)
-            {
-                throw new ArgumentException("loading attributes must be specified");
-            }
-
             DSResource result = new DSResource();
 
-            if (!attributesToLoad.Contains("DisplayName"))
+            if (attributesToLoad != null)
             {
-                attributesToLoad.Add("DisplayName");
-            }
-            if (!attributesToLoad.Contains("ObjectID"))
-            {
-                attributesToLoad.Add("ObjectID");
-            }
-            if (!attributesToLoad.Contains("ObjectType"))
-            {
-                attributesToLoad.Add("ObjectType");
-            }
-
-            foreach (string attributeName in attributesToLoad)
-            {
-                AttributeValue value = resourceObject.Attributes.FirstOrDefault(a => a.AttributeName.Equals(attributeName));
-
-                if (value != null)
+                if (!attributesToLoad.Contains("DisplayName"))
                 {
-                    if (value.IsNull)
-                    {
-                        result.Add(attributeName, null);
-                    }
-                    else
-                    {
-                        if (value.Attribute.IsMultivalued)
-                        {
-                            if (value.Attribute.Type.ToString().Equals("Reference"))
-                            {
-                                if (client != null && !value.AttributeName.Equals("ObjectID"))
-                                {
-                                    List<Dictionary<string, object>> refValues = new List<Dictionary<string, object>>();
-                                    foreach (string refValue in value.StringValues)
-                                    {
-                                        ResourceObject refObject = client.GetResource(refValue, new string[] { "DisplayName" });
-                                        refValues.Add(new Dictionary<string, object>
-                                        {
-                                            { "DisplayName", refObject.DisplayName },
-                                            { "ObjectID", refObject.ObjectID.Value },
-                                            { "ObjectType", refObject.ObjectType.ToString() }
-                                        });
-                                    }
-                                    result.Add(attributeName, refValues.ToArray());
-                                }
-                                else
-                                {
-                                    result.Add(attributeName, value.StringValues);
-                                }
-                            }
-                            else
-                            {
-                                result.Add(attributeName, value.Values);
-                            }
-                        }
-                        else
-                        {
-                            if (value.Attribute.Type.ToString().Equals("Reference"))
-                            {
-                                if (client != null && !value.AttributeName.Equals("ObjectID"))
-                                {
-                                    ResourceObject refObject = client.GetResource(value.StringValue, new string[] { "DisplayName" });
-                                    result.Add(attributeName, new Dictionary<string, object>
-                                    {
-                                        { "DisplayName", refObject.DisplayName },
-                                        { "ObjectID", refObject.ObjectID.Value },
-                                        { "ObjectType", refObject.ObjectType.ToString() }
-                                    });
-                                }
-                                else
-                                {
-                                    result.Add(attributeName, value.StringValue);
-                                }
-                            }
-                            else
-                            {
-                                result.Add(attributeName, value.Value);
-                            }
-                        }
-                    }
+                    attributesToLoad.Add("DisplayName");
+                }
+                if (!attributesToLoad.Contains("ObjectID"))
+                {
+                    attributesToLoad.Add("ObjectID");
+                }
+                if (!attributesToLoad.Contains("ObjectType"))
+                {
+                    attributesToLoad.Add("ObjectType");
+                }
+
+                foreach (string attributeName in attributesToLoad)
+                {
+                    AttributeValue value = resourceObject.Attributes.FirstOrDefault(a => a.AttributeName.Equals(attributeName));
+
+                    buildAttribute(attributeName, value, client, ref result);
                 }
             }
+            else
+            {
+                foreach (AttributeValue attributeValue in resourceObject.Attributes)
+                {
+                    buildAttribute(attributeValue.AttributeName, attributeValue, client, ref result);
+                }
+            }
+            
 
             return result;
         }
-
+        
         public static DSResource BuildFullResource(ResourceObject resourceObject, 
             List<string> attributesToLoad, Dictionary<string, DSAttribute> schema, ResourceManagementClient client = null)
         {

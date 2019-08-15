@@ -169,11 +169,6 @@ namespace OCG.DataService.Repo.MIMResource
                 throw new ArgumentException("xpath query must be specified");
             }
 
-            if (attributes == null || attributes.Length == 0)
-            {
-                attributes = new string[] { "DisplayName" };
-            }
-
             DSResourceSet result = new DSResourceSet();
             
             List<SortingAttribute> sortingAttributes = new List<SortingAttribute>();
@@ -196,25 +191,46 @@ namespace OCG.DataService.Repo.MIMResource
 
             if (pageSize == 0)
             {
-                SearchResultCollection src = sortingAttributes.Count == 0 ?
-                    client.GetResources(query, attributes) as SearchResultCollection :
-                    client.GetResources(query, attributes, sortingAttributes) as SearchResultCollection;
+                SearchResultCollection src;
+
+                if (attributes == null || attributes.Length == 0)
+                {
+                    src = client.GetResources(query) as SearchResultCollection;
+                }
+                else
+                {
+                    src = sortingAttributes.Count == 0 ?
+                        client.GetResources(query, attributes) as SearchResultCollection :
+                        client.GetResources(query, attributes, sortingAttributes) as SearchResultCollection;
+                }
 
                 if (src != null)
                 {
                     result.TotalCount = src.Count;
                     foreach (ResourceObject resource in src)
                     {
-                        result.Results.Add(Utiles.BuildSimpleResource(resource, attributes.ToList(), rmClient));
+                        result.Results.Add(Utiles.BuildSimpleResource(
+                            resource,
+                            attributes == null || attributes.Length == 0? null : attributes.ToList(),
+                            rmClient));
                     }
                 }
             }
             else
             {
-                SearchResultPager srp = sortingAttributes.Count == 0 ?
-                    client.GetResourcesPaged(query, pageSize, attributes) :
-                    client.GetResourcesPaged(query, pageSize, attributes, sortingAttributes);
+                SearchResultPager srp;
 
+                if (attributes == null  || attributes.Length == 0)
+                {
+                    srp = client.GetResourcesPaged(query, pageSize);
+                }
+                else
+                {
+                    srp = sortingAttributes.Count == 0 ?
+                        client.GetResourcesPaged(query, pageSize, attributes) :
+                        client.GetResourcesPaged(query, pageSize, attributes, sortingAttributes);
+                }
+                
                 if (index >= 0)
                 {
                     srp.CurrentIndex = index;
@@ -224,7 +240,10 @@ namespace OCG.DataService.Repo.MIMResource
 
                 foreach (ResourceObject resource in srp.GetNextPage())
                 {
-                    result.Results.Add(Utiles.BuildSimpleResource(resource, attributes.ToList(), rmClient));
+                    result.Results.Add(Utiles.BuildSimpleResource(
+                        resource,
+                        attributes == null || attributes.Length == 0? null : attributes.ToList(),
+                        rmClient));
                 }
 
                 result.TotalCount = srp.TotalCount;
