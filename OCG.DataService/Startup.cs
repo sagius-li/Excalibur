@@ -190,9 +190,10 @@ namespace OCG.DataService
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui, specifying the Swagger JSON endpoint
+            string prefix = Configuration.GetSection("RoutePrefix").Get<string>();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "OCG Data Service V1");
+                c.SwaggerEndpoint(prefix + "/swagger/v1/swagger.json", "OCG Data Service V1");
                 // To serve the Swagger UI at the app's root, set the RoutePrefix property to an empty string
                 c.RoutePrefix = string.Empty;
             });
