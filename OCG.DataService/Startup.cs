@@ -174,7 +174,7 @@ namespace OCG.DataService
             if (allowedOrigins == null)
             {
                 allowedOrigins = new string[] {
-                    "http://localhost:20466",
+                    "http://localhost:8088",
                     "http://localhost:4200",
                     "http://localhost:6768" };
             }
